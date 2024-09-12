@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table with Dropdown</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .dropdown-row {
+            display: none;
+            transition: all 0.3s ease;
+        }
+        .arrow {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>John Doe</td>
+                <td>30</td>
+                <td>
+                    <span class="arrow" onclick="toggleDropdown(this)">&#9660;</span>
+                </td>
+            </tr>
+            <tr class="dropdown-row">
+                <td colspan="3">
+                    <a href="#">Edit</a> | 
+                    <a href="#">Delete</a> | 
+                    <a href="#">View</a>
+                </td>
+            </tr>
+            <tr>
+                <td>Jane Smith</td>
+                <td>25</td>
+                <td>
+                    <span class="arrow" onclick="toggleDropdown(this)">&#9660;</span>
+                </td>
+            </tr>
+            <tr class="dropdown-row">
+                <td colspan="3">
+                    <a href="#">Edit</a> | 
+                    <a href="#">Delete</a> | 
+                    <a href="#">View</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        function toggleDropdown(element) {
+            var row = element.closest('tr').nextElementSibling;
+            if (row.style.display === "table-row") {
+                row.style.display = "none";
+            } else {
+                row.style.display = "table-row";
+            }
+        }
+    </script>
+</body>
+</html>
