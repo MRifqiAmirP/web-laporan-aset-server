@@ -284,48 +284,54 @@
                     $sqlServer = mysqli_query($conn, $queryServer);
                     $dataJumlahServer = mysqli_num_rows($sqlServer);
                     $resultAvp = mysqli_fetch_array($sqlAvp);
-                    $indexBtn++; ?>
-                    <div class="card content-card" style="width: 18rem; margin-right: 20px; margin-top: 20px;">
-                        <div class="card-body" style="display: flex; flex-direction: column; justify-content: space-between;">
-                            <div>
-                                <h5 class="card-title">Buat Server Baru</h5>
-                                <h6 class="card-subtitle mb-2 text-muted"><?= $result[0]; ?></h6>
-                                <p class="card-text">Nama: <?= $result[2]; ?></p>
-                                <p class="card-text" style="margin-top: -20px;">No. Pegawai: <?= $result[1]; ?></p>
-                                <p class="card-text" style="margin-top: -20px;">Username: <?= $result[3]; ?></p>
-                                <p class="card-text" style="margin-top: -20px;">Email: <?= $result[5]; ?></p>
-                                <p class="card-text" style="margin-top: -20px;">Posisi: <?= $result[6]; ?></p>
+
+                    $sqlTicket = mysqli_query($conn, "SELECT * FROM tb_ticket WHERE NO_TICKET = '{$result['NO_TICKET']}' AND STATUS = 'Closed'");
+                    $resultTicket = mysqli_fetch_array($sql);
+
+                    if ($resultTicket):
+                        $indexBtn++; ?>
+                        <div class="card content-card" style="width: 18rem; margin-right: 20px; margin-top: 20px;">
+                            <div class="card-body" style="display: flex; flex-direction: column; justify-content: space-between;">
+                                <div>
+                                    <h5 class="card-title">Buat Server Baru</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted"><?= $result[0]; ?></h6>
+                                    <p class="card-text">Nama: <?= $result[2]; ?></p>
+                                    <p class="card-text" style="margin-top: -20px;">No. Pegawai: <?= $result[1]; ?></p>
+                                    <p class="card-text" style="margin-top: -20px;">Username: <?= $result[3]; ?></p>
+                                    <p class="card-text" style="margin-top: -20px;">Email: <?= $result[5]; ?></p>
+                                    <p class="card-text" style="margin-top: -20px;">Posisi: <?= $result[6]; ?></p>
+                                </div>
+                                <?php if ($resultAvp[1] == 'Accept' && $dataJumlahServer == 0) { ?>
+                                    <div>
+                                        <button class="btn btn-info detail-btn" type="button" data-index="<?= $indexBtn; ?>">
+                                            Proses
+                                        </button>
+                                    </div>
+                                <?php
+                                } elseif ($resultAvp[1] == 'Reject') {
+                                ?>
+                                    <div>
+                                        <div class="bg-danger col-5 text-center" style="border-radius: 5px; padding: 8px;">Reject</div>
+                                    </div>
+                                <?php } elseif ($dataJumlahServer == 1) {
+                                    $indexReview++; ?>
+                                    <div class="row justify-content-center">
+                                        <div class="bg-success col-5 text-center" style="border-radius: 5px; padding: 8px;">Selesai</div>
+                                        <button class="btn btn-info ms-1 col-5 review-btn" type="button" data-index="<?= $indexReview; ?>">
+                                            Review
+                                        </button>
+                                    </div>
+                                <?php } else { ?>
+                                    <div>
+                                        <button class="btn btn-primary detail-btn" type="button" data-index="<?= $indexBtn; ?>">
+                                            Lihat detail
+                                        </button>
+                                    </div>
+                                <?php } ?>
                             </div>
-                            <?php if ($resultAvp[1] == 'Accept' && $dataJumlahServer == 0) { ?>
-                                <div>
-                                    <button class="btn btn-info detail-btn" type="button" data-index="<?= $indexBtn; ?>">
-                                        Proses
-                                    </button>
-                                </div>
-                            <?php
-                            } elseif ($resultAvp[1] == 'Reject') {
-                            ?>
-                                <div>
-                                    <div class="bg-danger col-5 text-center" style="border-radius: 5px; padding: 8px;">Reject</div>
-                                </div>
-                            <?php } elseif ($dataJumlahServer == 1) {
-                                $indexReview++; ?>
-                                <div class="row justify-content-center">
-                                    <div class="bg-success col-5 text-center" style="border-radius: 5px; padding: 8px;">Selesai</div>
-                                    <button class="btn btn-info ms-1 col-5 review-btn" type="button" data-index="<?= $indexReview; ?>">
-                                        Review
-                                    </button>
-                                </div>
-                            <?php } else { ?>
-                                <div>
-                                    <button class="btn btn-primary detail-btn" type="button" data-index="<?= $indexBtn; ?>">
-                                        Lihat detail
-                                    </button>
-                                </div>
-                            <?php } ?>
                         </div>
-                    </div>
-                <?php endwhile; ?>
+                <?php endif;
+                endwhile; ?>
             </div>
         </div>
     </div>

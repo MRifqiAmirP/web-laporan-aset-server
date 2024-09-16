@@ -272,7 +272,7 @@
                 $indexBtn = 0; // Inisialisasi indexBtn
                 $indexReview = 0;
                 while ($result = mysqli_fetch_array($sql)) :
-                    $queryServer = "SELECT NO_TICKET FROM tb_server WHERE NO_TICKET = '$result[0]' AND !NO_TICKET";
+                    $queryServer = "SELECT NO_TICKET FROM tb_server WHERE NO_TICKET = '$result[0]'";
                     $sqlServer = mysqli_query($conn, $queryServer);
 
                     $queryAvp = "SELECT * FROM tb_avp_response WHERE NO_TICKET = '{$result['NO_TICKET']}'";

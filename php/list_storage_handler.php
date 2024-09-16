@@ -12,7 +12,6 @@ echo '
         <th scope="col" style="text-align: center;">TOTAL RAM</th>
         <th scope="col" style="text-align: center;">TOTAL MEMORI</th>
         <th scope="col" style="text-align: center;">TOTAL CPU</th>
-        <th scope="col" style="text-align: center;">TOTAL MEMORI</th>
         <th scope="col" style="text-align: center;">OS</th>
         <th scope="col" style="text-align: center;">ESXi</th>
     </thead>
@@ -30,7 +29,6 @@ else {
         echo '<td>' . $result['TOTAL_RAM'] . ' Gb</td>';
         echo '<td>' . $result['TOTAL_MEMORI'] . ' Gb</td>';
         echo '<td>' . $result['TOTAL_CPU'] . ' Cores</td>';
-        echo '<td>' . $result['TOTAL_MEMORI'] . ' Gb</td>';
         echo '<td>' . $result['OS'] . '</td>';
         echo '<td>' . $result['ESXi'] . '</td>';
         echo '</tr>';

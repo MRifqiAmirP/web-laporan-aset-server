@@ -120,12 +120,10 @@ if (isset($_POST['server'])) {
                 $queryUpdateStorage = "UPDATE tb_data_storage SET size = $newSize WHERE DATA_STORAGE LIKE '%$storage'";
                 $sqlUpdateStorage = mysqli_query($conn, $queryUpdateStorage);
 
-                // Redirect setelah semua operasi berhasil
                 if ($sqlUpdateStorage) {
                     header('Location: ../main/sistemDB.php');
                     exit();
                 } else {
-                    // Handle error jika update storage gagal
                     echo "Error updating storage size: " . mysqli_error($conn);
                 }
             } else {
@@ -160,15 +158,98 @@ if (isset($_POST['server'])) {
 
     if ($_POST['server'] == 'edit') {
         $id_server = $_POST['id'];
+        $ticket = $_POST['ticket'];
         $memori = $_POST['memori'];
         $ram = $_POST['ram'];
         $cpu = $_POST['cpu'];
         $storage = $_POST['storage'];
         $esxi = $_POST['esxi'];
 
+        $memoriData = 0;
+        $memoriData = ($memori == 1) ? 250 : (($memori == 2) ? 520 : (($memori == 3) ? 1024 : 0));
+        $ramData = 0;
+        $ramData = ($ram == 1) ? 1 : (($ram == 2) ? 2 : (($ram == 3) ? 4 : 0));
+        $cpuData = 0;
+        $cpuData = ($cpu == 1) ? 1 : (($cpu == 2) ? 2 : (($cpu == 3) ? 3 : 0));
+
         $queryServer = "SELECT * FROM tb_server WHERE ID_SERVER = '$id_server'";
         $sqlServer = mysqli_query($conn, $queryServer);
         $resultServer = mysqli_fetch_array($sqlServer);
+
+        if($resultServer) {
+            $currentMemori = $resultServer['TOTAL_MEMORI'];
+            $currentRam = $resultServer['TOTAL_RAM'];
+            $currentCpu = $resultServer['TOTAL_CPU'];
+            $currentStorage = $resultServer['DATA_STORAGE'];
+            $currentEsxi = $resultServer['ESXi'];
+
+            $queryDS = "SELECT * FROM tb_data_storage WHERE DATA_STORAGE LIKE '%$currentStorage'";
+            $sqlDS = mysqli_query($conn, $queryDS);
+            $resultDS = mysqli_fetch_array($sqlDS);
+
+            $queryEsxi = "SELECT * FROM esxi WHERE ID = $currentEsxi";
+            $sqlEsxi = mysqli_query($conn, $queryEsxi);
+            $resultEsxi = mysqli_fetch_array($sqlEsxi);
+
+            $newMemori = $resultDS['SIZE'] + $currentMemori;
+            $newCpu = $resultEsxi['CPU_CORES'] + $currentCpu;
+            $newRam = $resultEsxi['RAM'] + $currentRam;
+
+            // 98 + 2 = 100
+            
+            $sqlUpdateStorage2 = mysqli_query($conn, "UPDATE tb_data_storage SET SIZE = $newMemori WHERE DATA_STORAGE LIKE '%$currentStorage'");
+
+            $sqlUpdateEsxi2 = mysqli_query($conn, "UPDATE esxi SET CPU_CORES = $newCpu, RAM = $newRam WHERE ID = $currentEsxi");
+            // 100
+
+            if($storage == $currentStorage) {
+                $newMemori -= $memoriData;
+                $sqlUpdateStorage2 = mysqli_query($conn, "UPDATE tb_data_storage SET SIZE = $newMemori WHERE DATA_STORAGE LIKE '%$storage'");
+
+                $sqlUpdateServer = mysqli_query($conn, "UPDATE tb_server SET TOTAL_MEMORI = $memoriData WHERE ID_SERVER = $id_server");
+            }
+            else {
+                $queryDS2 = "SELECT * FROM tb_data_storage WHERE DATA_STORAGE LIKE '%$storage'";
+                $sqlDS2 = mysqli_query($conn, $queryDS2);
+                $resultDS2 = mysqli_fetch_array($sqlDS2);
+
+                $newMemori = $resultDS2['SIZE'] - $memoriData;
+
+                $sqlUpdateStorage2 = mysqli_query($conn, "UPDATE tb_data_storage SET SIZE = $newMemori WHERE DATA_STORAGE LIKE '%$storage'");
+                
+                $sqlUpdateServer = mysqli_query($conn, "UPDATE tb_server SET TOTAL_MEMORI = $memoriData, DATA_STORAGE = $storage WHERE ID_SERVER = $id_server");
+            }
+
+            if ($esxi == $currentEsxi) {
+                $newCpu -= $cpuData;
+                $newRam -= $ramData;
+
+                $sqlUpdateEsxi2 = mysqli_query($conn, "UPDATE esxi SET CPU_CORES = $newCpu, RAM = $newRam WHERE ID = $esxi");
+
+                $sqlUpdateServer2 = mysqli_query($conn, "UPDATE tb_server SET TOTAL_CPU = $cpuData, TOTAL_RAM = $ramData WHERE ID_SERVER = $id_server");
+            }
+            else {
+                $queryEsxi2 ="SELECT * FROM esxi WHERE ID = $esxi";
+                $sqlEsxi2 = mysqli_query($conn, $queryEsxi2);
+                $resultEsxi2 = mysqli_fetch_array($sqlEsxi2);
+
+                $newCpu = $resultEsxi2['CPU_CORES'] - $cpuData;
+                $newRam = $resultEsxi2['RAM'] - $ramData;
+
+                $sqlUpdateEsxi2 = mysqli_query($conn, "UPDATE esxi SET CPU_CORES = $newCpu, RAM = $newRam WHERE ID = $esxi");
+
+                $sqlUpdateServer2 = mysqli_query($conn, "UPDATE tb_server SET TOTAL_CPU = $cpuData, TOTAL_RAM = $ramData, ESXi = $esxi WHERE ID_SERVER = $id_server");
+            }
+
+            $sqlUpdateServer3 = mysqli_query($conn, "UPDATE tb_server SET NO_TICKET = '$ticket' WHERE ID_SERVER = $id_server");
+
+            if ($sqlUpdateServer3) {
+                header("Location: ../main/sistemDB.php");
+            }
+        }
+        else {
+            echo "Server tidak ditemukan";
+        }
 
         
     }

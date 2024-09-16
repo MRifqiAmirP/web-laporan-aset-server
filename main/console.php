@@ -176,6 +176,8 @@ if (isset($_SESSION['no_peg'])) {
                     if ($dataServer) {
                         $sqlAvp = mysqli_query($conn, "SELECT NO_TICKET, RESPONSE FROM tb_avp_response WHERE NO_TICKET = '{$dataServer['NO_TICKET']}'");
                         $avpResponse = mysqli_fetch_array($sqlAvp);
+
+                        $sqlRSC = mysqli_query($conn, "SELECT tb_server.NO_TICKET, tb_req_edit_server.NO_TICKET FROM tb_server INNER JOIN tb_req_edit_server ON tb_server.NO_TICKET = tb_req_edit_server.NO_TICKET WHERE tb_req_edit_server.NO_TICKET =  '{$dataServer['NO_TICKET']}'");
                     }
                 ?>
                     <tr class="text-white">
@@ -190,7 +192,9 @@ if (isset($_SESSION['no_peg'])) {
                             <?php if ($checkServer) : ?>
                                 <div class="container">
                                     <p>Maintenance</p>
-                                    <?php if ($avpResponse) :
+                                    <?php if(!$sqlRSC) : ?>
+                                        <p class="bg-success rounded text-center" style="padding: 5px; margin-top: -10px;">Selesai</p>
+                                    <?php elseif ($avpResponse) :
                                         if ($avpResponse['RESPONSE'] == 'Accept') : ?>
                                             <p class="bg-info rounded text-center" style="padding: 5px; margin-top: -10px;">Accept</p>
                                         <?php elseif ($avpResponse['RESPONSE'] == 'Reject') :?>

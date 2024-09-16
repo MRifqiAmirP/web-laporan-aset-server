@@ -402,6 +402,7 @@
                                         <input type="hidden" name="posisi" id="posisi" value="<?= $resultPegawai['POSISI']; ?>">
                                     <?php elseif (isset($_GET['edit-server'])) : ?>
                                         <input type="hidden" name="id" id="id" value="<?= $resultServer['ID_SERVER'];?>">
+                                        <input type="hidden" name="ticket" id="ticket" value="<?= $result['NO_TICKET']; ?>">
                                     <?php else : ?>
                                         <input type="hidden" name="ticket" id="ticket" value="<?php echo htmlspecialchars($result['NO_TICKET']); ?>">
                                         <input type="hidden" name="username" value="<?= $result[2]; ?>">
@@ -412,7 +413,7 @@
                                     <label for="memori" class="form-label">Memori</label>
                                     <select id="memori" name="memori" class="form-select" aria-label="Default select example">
                                         <option selected>Pilih Total Memori</option>
-                                        <option value="1">256 Gb</option>
+                                        <option value="1">250 Gb</option>
                                         <option value="2">520 Gb</option>
                                         <option value="3">1024 Gb</option>
                                     </select>
@@ -454,7 +455,7 @@
                                     <div class="mb-3">
                                         <label for="esxi" class="form-label">ESXi</label>
                                         <select id="esxi" name="esxi" class="form-select" aria-label="Default select example">
-                                            <option selected>Pilih Data Storage</option>
+                                            <option selected>Pilih ESXi</option>
                                             <option value="1">ESXi 1</option>
                                             <option value="2">ESXi 2</option>
                                             <option value="3">ESXi 3</option>
