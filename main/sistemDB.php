@@ -190,7 +190,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div id="report" class="col-md-3">
                         <div class="card text-center">
                             <div class="card-body">
                                 <h5 class="card-title">REQUEST SELESAI</h5>
@@ -359,7 +359,13 @@
             window.location.href = 'request-page.php';
 
         });
+
+        document.getElementById('report').addEventListener('click', function() {
+            window.location.href = 'sistemDB_report.php';
+
+        });
     </script>
+
     <script>
         // var ctx = document.getElementById('loadTimeChart').getContext('2d');
         // var loadTimeChart = new Chart(ctx, {

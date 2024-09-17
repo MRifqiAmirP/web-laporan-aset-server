@@ -256,13 +256,25 @@ if (isset($_POST['server'])) {
 }
 
 
-elseif ($_POST['selesai']) {
+elseif (isset($_POST['selesai'])) {
     $ticket = $_POST['ticket'];
 
     $queryUpdate = "UPDATE tb_ticket SET STATUS ='Closed' WHERE NO_TICKET = '$ticket'";
 
     if (mysqli_query($conn, $queryUpdate)) {
         header("Location: ../main/user.php");
+    } else {
+        echo "Error";
+    }
+}
+
+elseif (isset($_POST['close-ticket'])) {
+    $ticket = $_POST['ticket'];
+
+    $queryUpdate = "UPDATE tb_ticket SET STATUS ='Closed' WHERE NO_TICKET = '$ticket'";
+
+    if (mysqli_query($conn, $queryUpdate)) {
+        header("Location: ../main/console.php");
     } else {
         echo "Error";
     }

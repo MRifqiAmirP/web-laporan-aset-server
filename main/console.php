@@ -122,7 +122,7 @@ if (isset($_SESSION['no_peg'])) {
     <?php
     include '../php/connect.php';
 
-    $query = "SELECT peg.NO_TICKET, peg.NO_PEG, serv.* FROM tb_pegawai peg INNER JOIN tb_server serv ON peg.NO_TICKET = serv.NO_TICKET WHERE peg.NO_PEG = '$nopeg';";
+    $query = "SELECT peg.NO_TICKET, peg.NO_PEG, serv.* FROM tb_pegawai peg INNER JOIN tb_server serv ON peg.NO_TICKET = serv.NO_TICKET WHERE peg.NO_PEG = '$nopeg'";
     $sql = mysqli_query($conn, $query);
 
     ?>
@@ -178,6 +178,9 @@ if (isset($_SESSION['no_peg'])) {
                         $avpResponse = mysqli_fetch_array($sqlAvp);
 
                         $sqlRSC = mysqli_query($conn, "SELECT tb_server.NO_TICKET, tb_req_edit_server.NO_TICKET FROM tb_server INNER JOIN tb_req_edit_server ON tb_server.NO_TICKET = tb_req_edit_server.NO_TICKET WHERE tb_req_edit_server.NO_TICKET =  '{$dataServer['NO_TICKET']}'");
+
+                        $sqlTicket = mysqli_query($conn, "SELECT * FROM tb_ticket WHERE NO_TICKET = '{$dataServer['NO_TICKET']}'");
+                        $resultTicket = mysqli_fetch_array($sqlTicket);
                     }
                 ?>
                     <tr class="text-white">
@@ -191,15 +194,23 @@ if (isset($_SESSION['no_peg'])) {
                         <td style="display: flex; justify-content: space-evenly; align-items: center;">
                             <?php if ($checkServer) : ?>
                                 <div class="container">
-                                    <p>Maintenance</p>
-                                    <?php if(!$sqlRSC) : ?>
-                                        <p class="bg-success rounded text-center" style="padding: 5px; margin-top: -10px;">Selesai</p>
-                                    <?php elseif ($avpResponse) :
+                                    <?php if ($resultTicket['STATUS'] == 'Closed') : ?>
+                                        <a href="create_server.php?edit=<?= $result['ID_SERVER']; ?>&&nopeg=<?= $result['NO_PEG']; ?>" style="font-size: small;" class="btn btn-primary">EDIT</a>
+                                    <?php elseif (mysqli_num_rows($sqlRSC) > 0) : ?>
+                                        <p>Maintenance</p>
+                                        <form action="../php/proses.php" method="post">
+                                            <input type="hidden" id="ticket" name="ticket" value="<?= $result['NO_TICKET']; ?>">
+                                            <button type="submit" name="close-ticket" id="btn-close-ticket" class="btn-review btn btn-success">Selesai</button>
+                                        </form>
+                                        <?php elseif ($avpResponse) :
                                         if ($avpResponse['RESPONSE'] == 'Accept') : ?>
+                                            <p>Maintenance</p>
                                             <p class="bg-info rounded text-center" style="padding: 5px; margin-top: -10px;">Accept</p>
-                                        <?php elseif ($avpResponse['RESPONSE'] == 'Reject') :?>
+                                        <?php elseif ($avpResponse['RESPONSE'] == 'Reject') : ?>
+                                            <p>Maintenance</p>
                                             <p class="bg-danger rounded text-center" style="padding: 5px; margin-top: -10px;">Reject</p>
                                         <?php else : ?>
+                                            <p>Maintenance</p>
                                             <p class="bg-warning rounded text-center" style="padding: 5px; margin-top: -10px;">Waiting...</p>
                                         <?php endif; ?>
                                     <?php endif; ?>
@@ -213,6 +224,23 @@ if (isset($_SESSION['no_peg'])) {
             </tbody>
         </table>
     </div>
+
+    <script>
+        let ticket = document.getElementById('ticket').value;
+
+        document.getElementById('btn-close-ticket').addEventListener('click', function() {
+            console.log("Button ditekan");
+            const ajax3 = new XMLHttpRequest();
+            ajax3.open('POST', '../php/email_handler.php', true);
+            ajax3.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            ajax3.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log(this.responseText);
+                }
+            }
+            ajax3.send("close-ticket=true&&ticket=" + ticket);
+        });
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
